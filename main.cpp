@@ -99,7 +99,6 @@ int getGraphSize(){
 
 int minDistance(int dist[], bool sptSet[])
 {
-    // Initialize min value
     int min = INT_MAX, min_index;
 
     for (int v = 0; v < V; v++)
@@ -116,24 +115,22 @@ int printSolution(int dist[]){
 
 
 
+
 }
 
 void dijkstra(int** graph, int src)
 {
-    int dist[V]; // The output array.  dist[i] will hold the shortest
-    // distance from src to i
+    int dist[V];
 
-    bool sptSet[V]; // sptSet[i] will be true if vertex i is included in shortest
-    // path tree or shortest distance from src to i is finalized
 
-    // Initialize all distances as INFINITE and stpSet[] as false
+    bool sptSet[V];
+
+
     for (int i = 0; i < V; i++)
         dist[i] = INT_MAX, sptSet[i] = false;
 
-    // Distance of source vertex from itself is always 0
     dist[src] = 0;
 
-    // Find shortest path for all vertices
     for (int count = 0; count < V - 1; count++) {
 
         int u = minDistance(dist, sptSet);
@@ -151,8 +148,6 @@ void dijkstra(int** graph, int src)
         }
     }
 
-    // print the constructed distance array
-    printSolution(dist);
 }
 
 void drawBoard( int countOfVertex ){
@@ -226,16 +221,8 @@ void drawBoard( int countOfVertex ){
         }
     }
 
-    //window.clear();
-    for(int i=0;i<countOfVertex;i++)
-        for(int j=0;j<countOfVertex;j++){}
 
-    for(int i=0;i<countOfVertex;i++){
-        //vertex[i]->Select();
-        //vertex[i].printMyVertex();
-        //window.display();
-        //usleep(1000);
-    }
+
 }
 void printGraph(){}
 void printVertex(){}
