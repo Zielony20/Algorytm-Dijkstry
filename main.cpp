@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <string>
 #include <unistd.h>
 #include <iostream>
 #include <limits.h>
@@ -7,13 +8,17 @@
 #include <vector>
 #include "MyVertex.h"
 #include "MyEdge.h"
+#include <random>
+
 using namespace std;
+
 #define V 9
-const int height=400;
-const int width=1000;
+
+const int height=600;
+const int width=1200;
 
 sf::RenderWindow window(sf::VideoMode(width,height ),
-"Algorytm Dijkstry",sf::Style::Resize|sf::Style::Default);
+"Algorytm Dijkstry",sf::Style::Default);
 
 
 
@@ -21,27 +26,13 @@ int minDistance(int dist[], bool sptSet[]);
 int printSolution(int dist[]);
 void dijkstra(int** graph, int src);
 int getGraphSize();
-void drawBoard( int countOfVertex );
+void drawBoard( int countOfVertex,vector <MyVertex>& vertex,vector <MyEdge*> edge,int** graph  );
 void printGraph();
 void printVertex();
 void printEdge();
 
 int main()
 {
-
-    int graph[V][V] = { { 0, 4, 0, 0, 0, 0, 0, 8, 0 },
-                        { 4, 0, 8, 0, 0, 0, 0, 11, 0 },
-                        { 0, 8, 0, 7, 0, 4, 0, 0, 2 },
-                        { 0, 0, 7, 0, 9, 14, 0, 0, 0 },
-                        { 0, 0, 0, 9, 0, 10, 0, 0, 0 },
-                        { 0, 0, 4, 14, 10, 0, 2, 0, 0 },
-                        { 0, 0, 0, 0, 0, 2, 0, 1, 6 },
-                        { 8, 11, 0, 0, 0, 0, 1, 0, 7 },
-                        { 0, 0, 2, 0, 0, 0, 6, 7, 0 } };
-
-
-
-
 
     while (window.isOpen())
     {
@@ -54,11 +45,7 @@ int main()
             break;
         case sf::Event::TextEntered:
         {
-            if(event.text.unicode<128){
-                text.setString("zmieniono");
-                window.clear();
-                window.draw(text);
-            }
+
 
         }break;
 
@@ -70,11 +57,34 @@ int main()
 
 
         window.clear();
-        dijkstra(graph, 0);
-        drawBoard(5);
+        vector <MyVertex> vertex;
+        vector <MyEdge*> edge;
+
+        int w=V;
+        int k=V;
+
+        int** tab = new int *[w];
+        for(int i=0;i<w;i++){
+            tab[i] = new int[k];
+                for(int j=0;j<k;++j)
+                {
+                    tab[i][j] = 0;
+                }
+        }
+
+        drawBoard(V,vertex,edge,tab);
+        for(int i=0;i<w;i++){
+                for(int j=0;j<k;++j)
+                {
+                    cout << tab[i][j] <<" ";
+                }
+                cout<<endl;
+        }
+        dijkstra(tab, 0);
+
 
         window.display();
-        sleep(3);
+        usleep(10000);
 
     }
 
@@ -109,12 +119,73 @@ int minDistance(int dist[], bool sptSet[])
 }
 
 int printSolution(int dist[]){
+    sf::RectangleShape cleaner;
+    sf::RectangleShape b[256];
+    sf::Text t[V];
+    sf::Text t2[V];
+    sf::Text vertex,distance;
+
+    sf::Font font;
+    font.loadFromFile("Arial.ttf");
+
+    distance.setFont(font);
+    distance.setString("Distance");
+    distance.setPosition(width*14/16+4,height*(10)/64);
+
+    vertex.setFont(font);
+    vertex.setString("Vertex");
+    vertex.setPosition(width*12/16,height*(10)/64);
+
+
+    cleaner.setSize(sf::Vector2f(width/4,height));
+    cleaner.setFillColor(sf::Color::Black);
+    cleaner.setPosition( width*14/16+1,height*(16)/64+1 );
+
+    b[0].setSize(sf::Vector2f(width/4,4));
+    b[0].setFillColor(sf::Color::White);
+    b[0].setPosition( width*0.75,height*1/4 );
+    b[1].setSize(sf::Vector2f(4,height));
+    b[1].setFillColor(sf::Color::White);
+    b[1].setPosition( width*14/16,height*10/64 );
+    usleep(30000);
+    window.draw(cleaner);
+    usleep(30000);
+    window.display();
+    window.draw(vertex);
+    window.draw(distance);
+    window.draw(b[0]);
+    window.draw(b[1]);
+    for(int i=2,j=0;i<64;i++,j+=2){
+
+        b[i].setSize(sf::Vector2f(4,height/64));
+        b[i].setFillColor(sf::Color::White);
+        b[i].setPosition( width*11/16,height/32*j );
+        window.draw(b[i]);
+
+    }
+
+    window.display();
+    usleep(30000);
     printf("Vertex \t\t Distance from Source\n");
-    for (int i = 0; i < V; i++)
+    for (int i = 0; i < V; i++){
         printf("%d \t\t %d\n", i, dist[i]);
 
+        t[i].setFont(font);
+        char c = '0'+i;
+        t[i].setString(c);
+        t[i].setPosition(width*13/16,height*(16+4*i)/64);
 
+        t2[i].setFont(font);
+        std::string s = std::to_string(dist[i]);
+        t2[i].setString(s);
+        t2[i].setPosition(width*14/16+4,height*(16+4*i)/64);
+        window.draw(t[i]);
+        window.draw(t2[i]);
 
+    }
+    usleep(30000);
+    window.display();
+    sleep(1);
 
 }
 
@@ -144,62 +215,69 @@ void dijkstra(int** graph, int src)
 
                 dist[v] = dist[u] + graph[u][v];
             }
+
             printSolution(dist);
+            usleep(30000);
         }
     }
 
 }
 
-void drawBoard( int countOfVertex ){
+void drawBoard( int countOfVertex,vector <MyVertex>& vertex,vector <MyEdge*> edge ,int** graph){
     sf::Vector2f mousePos;
-    vector <MyVertex> vertex;
+    float margin = 40;
+/*****************************Arrage vertex on board*********************************************/
+
+
 
     for(int i=0;i<countOfVertex;){
+        usleep(3000);
+        auto checker=[vertex,margin](sf::Vector2f m){
+            std::cout << vertex.size()<<endl;
+            for(MyVertex v : vertex){
 
-        if( sf::Mouse::isButtonPressed(sf::Mouse::Left) ){
-            mousePos.x = (float) sf::Mouse::getPosition(window).x;
-            mousePos.y = (float) sf::Mouse::getPosition(window).y;
-            //cout << sf::Mouse::getPosition(window).y<<":"<<sf::Mouse::getPosition(window).x<<endl;
+                if(v.distance(m)<=margin*2){
+                    return false;
+                }
+            }
+            return true;
+        };
 
-            cout<<i<<endl;
+        mousePos.x = (float) sf::Mouse::getPosition(window).x;
+        mousePos.y = (float) sf::Mouse::getPosition(window).y;
+        if(( sf::Mouse::isButtonPressed(sf::Mouse::Left)
+             and mousePos.x < width*11/16-margin
+             and mousePos.x>margin
+             and mousePos.y>margin
+             and mousePos.y<height-margin
+             and checker(mousePos))){
 
             vertex.push_back( *(new MyVertex(i,mousePos)));
-            vertex[i].printMyVertex();
+            vertex[i].drawMyVertex();
 
             window.display();
             i++;
             usleep(1000000);
+
         }
 
     }
 
-    vector <MyEdge*> edge;
 
-    int counter=0; // selecting vertex
-
+/*****************************CONNECT VERTEX IN GRAPH***************************************/
     vector <MyVertex> SelectedVertex;
     while( !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Return) ){
-    usleep(100000);
 
-    if( SelectedVertex.size()==2 ){
-       MyEdge test( SelectedVertex[0],SelectedVertex[1],5 );
-        test.DrawEdge();
-        window.display();
-        SelectedVertex[0].unSelect();
-        SelectedVertex[1].unSelect();
-
-        window.display();
-        SelectedVertex.pop_back();
-        SelectedVertex.pop_back();
-    }
-
-        if( sf::Mouse::isButtonPressed(sf::Mouse::Left) ){
+    /* ******************Selecting vertex to connect latter********************* */
+    if( sf::Mouse::isButtonPressed(sf::Mouse::Left)){
             cout<<"------------------------------"<<endl;
             mousePos.x = (float) sf::Mouse::getPosition(window).x;
             mousePos.y = (float) sf::Mouse::getPosition(window).y;
+
+
+
             usleep(100000);
 
-            int ite=0;
             for(MyVertex v : vertex) {
 
                 if( v.distance(mousePos) <= v.getRadius() ){
@@ -219,11 +297,32 @@ void drawBoard( int countOfVertex ){
                 }
             }
         }
-    }
+        usleep(100000);
+        if( SelectedVertex.size()==2 ){
+            MyEdge edge( SelectedVertex[0],SelectedVertex[1],5 );
+
+            edge.DrawEdge();
+            graph[SelectedVertex[0].getNumberInt()][SelectedVertex[1].getNumberInt()] = 5;
+            graph[SelectedVertex[1].getNumberInt()][SelectedVertex[0].getNumberInt()] = 5;
+
+            SelectedVertex[0].unSelect();
+            SelectedVertex[1].unSelect();
+
+            window.display();
+
+            SelectedVertex.pop_back();
+            SelectedVertex.pop_back();
+        }
+
+
+    } // end of while (ENTER)
 
 
 
 }
+
+
+
 void printGraph(){}
 void printVertex(){}
 void printEdge(){}

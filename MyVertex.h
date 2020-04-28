@@ -14,7 +14,7 @@ public:
     MyVertex();
 
     MyVertex( int number ,sf::Vector2f position,
-              sf::Color color=sf::Color::Red, float size=20 ):radius_(size){
+              sf::Color color=sf::Color::Red, float size=20 ):radius_(size),number_(number){
 
         char num = number + '0';
 
@@ -40,20 +40,20 @@ public:
 
         return vertex_.getPosition();
     }
-    void printMyVertex(){
+    void drawMyVertex(){
         window.draw(vertex_);
         window.draw(vertexNumber_);
     }
     bool Select(){
         isSelected_=true;
         vertex_.setOutlineColor(sf::Color(192, 234, 70));
-        printMyVertex();
+        drawMyVertex();
         return 1;
     }
     bool unSelect(){
         isSelected_=false;
         vertex_.setOutlineColor(sf::Color(250, 150, 100));
-        printMyVertex();
+        drawMyVertex();
         return 1;
     }
     bool isSelected(){
@@ -68,13 +68,17 @@ public:
     float getRadius(){
         return radius_;
     }
-    string getNumber(){
+    string getNumberString(){
         return vertexNumber_.getString();
+    }
+    int getNumberInt(){
+        return number_;
     }
 private:
     sf::CircleShape vertex_;
     sf::Text vertexNumber_;
     sf::Font font_;
+    int number_;
     bool isSelected_=false;
     float radius_;
 

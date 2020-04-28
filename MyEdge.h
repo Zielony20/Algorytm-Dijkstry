@@ -22,9 +22,10 @@ public:
         line[1].color = color;
 
         window.draw(line, 2, sf::Lines);
-        beginVertex_.printMyVertex();
-        endVertex_.printMyVertex();
+        beginVertex_.drawMyVertex();
+        endVertex_.drawMyVertex();
         window.display();
+        usleep(30000);
     }
     int getCost(){
         return cost_;
