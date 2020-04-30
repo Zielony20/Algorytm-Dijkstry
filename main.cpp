@@ -20,13 +20,11 @@ const int width=1200;
 sf::RenderWindow window(sf::VideoMode(width,height ),
 "Algorytm Dijkstry",sf::Style::Default);
 
-
-
 int minDistance(int dist[], bool sptSet[]);
 int printSolution(int dist[]);
-void dijkstra(int** graph, int src);
+void dijkstra(vector<MyEdge*>& vectorEdge,int** graph, int src);
 int getGraphSize();
-void drawBoard( int countOfVertex,vector <MyVertex>& vertex,vector <MyEdge*> edge,int** graph  );
+void drawBoard( int countOfVertex,vector <MyVertex>& vertex,vector<MyEdge*>& vectorEdge,int** graph  );
 void printGraph();
 void printVertex();
 void printEdge();
@@ -73,6 +71,10 @@ int main()
         }
 
         drawBoard(V,vertex,edge,tab);
+
+        cout << edge.size()<<endl;
+        sleep(5);
+
         for(int i=0;i<w;i++){
                 for(int j=0;j<k;++j)
                 {
@@ -80,7 +82,7 @@ int main()
                 }
                 cout<<endl;
         }
-        dijkstra(tab, 0);
+        dijkstra(edge,tab, 0);
 
 
         window.display();
@@ -147,10 +149,10 @@ int printSolution(int dist[]){
     b[1].setSize(sf::Vector2f(4,height));
     b[1].setFillColor(sf::Color::White);
     b[1].setPosition( width*14/16,height*10/64 );
-    usleep(30000);
+    usleep(3000);
     window.draw(cleaner);
-    usleep(30000);
-    window.display();
+    usleep(3000);
+    //window.display();
     window.draw(vertex);
     window.draw(distance);
     window.draw(b[0]);
@@ -164,8 +166,8 @@ int printSolution(int dist[]){
 
     }
 
-    window.display();
-    usleep(30000);
+    //window.display();
+    usleep(3000);
     printf("Vertex \t\t Distance from Source\n");
     for (int i = 0; i < V; i++){
         printf("%d \t\t %d\n", i, dist[i]);
@@ -189,13 +191,27 @@ int printSolution(int dist[]){
 
 }
 
-void dijkstra(int** graph, int src)
+void dijkstra(vector<MyEdge*>& vectorEdge,int** graph, int src)
 {
     int dist[V];
 
 
     bool sptSet[V];
 
+    auto edgeExist=[vectorEdge](int u,int v){
+
+            for( MyEdge* e : vectorEdge ){
+
+                if  (( e->getBeginVertex().getNumberInt()==u and e->getEndVertex().getNumberInt()==v)
+                  or ( e->getBeginVertex().getNumberInt()==v and e->getEndVertex().getNumberInt()==u))
+                {
+                    e->ActiveEdge();
+                    usleep(30000);
+                    return 1;
+                }
+            }
+            return 0;
+    };
 
     for (int i = 0; i < V; i++)
         dist[i] = INT_MAX, sptSet[i] = false;
@@ -210,6 +226,12 @@ void dijkstra(int** graph, int src)
 
         for (int v = 0; v < V; v++){
 
+            if ( edgeExist(u,v)  ){
+
+                cout<<"aktywacja wezła!"<<endl;
+
+            }
+
             if (!sptSet[v] && graph[u][v] && dist[u] != INT_MAX
                 && dist[u] + graph[u][v] < dist[v]){
 
@@ -223,7 +245,7 @@ void dijkstra(int** graph, int src)
 
 }
 
-void drawBoard( int countOfVertex,vector <MyVertex>& vertex,vector <MyEdge*> edge ,int** graph){
+void drawBoard( int countOfVertex,vector <MyVertex>& vertex,vector<MyEdge*>& vectorEdge ,int** graph){
     sf::Vector2f mousePos;
     float margin = 40;
 /*****************************Arrage vertex on board*********************************************/
@@ -257,7 +279,7 @@ void drawBoard( int countOfVertex,vector <MyVertex>& vertex,vector <MyEdge*> edg
 
             window.display();
             i++;
-            usleep(1000000);
+            usleep(10000);
 
         }
 
@@ -299,9 +321,12 @@ void drawBoard( int countOfVertex,vector <MyVertex>& vertex,vector <MyEdge*> edg
         }
         usleep(100000);
         if( SelectedVertex.size()==2 ){
-            MyEdge edge( SelectedVertex[0],SelectedVertex[1],5 );
+            MyEdge* edge = new MyEdge( SelectedVertex[0],SelectedVertex[1],5 );
 
-            edge.DrawEdge();
+            edge->DrawEdge();
+
+            vectorEdge.push_back(edge);
+
             graph[SelectedVertex[0].getNumberInt()][SelectedVertex[1].getNumberInt()] = 5;
             graph[SelectedVertex[1].getNumberInt()][SelectedVertex[0].getNumberInt()] = 5;
 

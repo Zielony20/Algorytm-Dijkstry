@@ -14,6 +14,33 @@ public:
     {
 
     }
+    void ActiveEdge(){
+        sf::Vertex line[2];
+        line[0].position = sf::Vector2f(beginVertex_.getPosition());
+        line[0].color  = sf::Color::Green;
+        line[1].position = sf::Vector2f(endVertex_.getPosition());
+        line[1].color = sf::Color::Green;
+
+        window.draw(line, 2, sf::Lines);
+        beginVertex_.Select();
+        usleep(100000);
+        endVertex_.Select();
+        //beginVertex_.drawMyVertex();
+        //endVertex_.drawMyVertex();
+        usleep(100000);
+        window.display();
+        usleep(300000);
+
+        line[0].color  = sf::Color::White;
+        line[1].color  = sf::Color::White;
+        window.draw(line, 2, sf::Lines);
+        beginVertex_.unSelect();
+        endVertex_.unSelect();
+        sleep(1);
+        window.display();
+        sleep(1);
+
+    }
     void DrawEdge(sf::Color color=sf::Color::White){
         sf::Vertex line[2];
         line[0].position = sf::Vector2f(beginVertex_.getPosition());
@@ -34,10 +61,21 @@ public:
     {
         cost_=cost;
     }
-
+    MyVertex getBeginVertex(){
+        return beginVertex_;
+    }
+    MyVertex getEndVertex(){
+        return endVertex_;
+    }
 private:
     int cost_;
     MyVertex beginVertex_;
     MyVertex endVertex_;
 
 };
+
+
+
+
+
+
