@@ -11,13 +11,16 @@ extern sf::RenderWindow window;
 class MyVertex{
 
 public:
-    MyVertex();
+    MyVertex(){
+        isSelected_=false;
+
+    }
 
     MyVertex( int number ,sf::Vector2f position,
               sf::Color color=sf::Color::Red, float size=20 ):radius_(size),number_(number){
 
         char num = number + '0';
-
+        isSelected_=false;
          vertex_.setFillColor(color);
          vertex_.setRadius(size);
 
@@ -41,16 +44,20 @@ public:
         return vertex_.getPosition();
     }
     void drawMyVertex(){
+
         window.draw(vertex_);
         window.draw(vertexNumber_);
+
     }
     bool Select(){
+        cout<<"zaznaczam"<<endl;
         isSelected_=true;
         vertex_.setOutlineColor(sf::Color(192, 234, 70));
         drawMyVertex();
         return 1;
     }
     bool unSelect(){
+        cout<<"odznaczam"<<endl;
         isSelected_=false;
         vertex_.setOutlineColor(sf::Color(250, 150, 100));
         drawMyVertex();
@@ -79,7 +86,7 @@ private:
     sf::Text vertexNumber_;
     sf::Font font_;
     int number_;
-    bool isSelected_=false;
+    bool isSelected_;
     float radius_;
 
 };
